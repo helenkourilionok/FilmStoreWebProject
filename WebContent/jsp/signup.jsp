@@ -14,7 +14,6 @@
 <link rel="stylesheet"
 	href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 <link href="css/styles.css" rel="stylesheet">
-<link href="css/commentstyle.css" rel="stylesheet">
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
 <script
@@ -41,14 +40,6 @@
 		});
 	});
 </script>
-<style type="text/css">
-				.error{
-				display: inline-block;
-				padding-top:15px;
-				font-size: 14px;
-				color:#eb6a5a;
-			}
-</style>
 <!--[if lt IE 9]>
 			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
 			<script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
@@ -73,6 +64,7 @@
 <fmt:message bundle="${locale}" key="locale.signup.enterBalance" var="enterBalance" />
 <fmt:message bundle="${locale}" key="locale.signup.createAccount" var="createAccount" />
 <fmt:message bundle="${locale}" key="locale.signup.signUpFailed" var="mesSignUpFailed"/>
+<fmt:message bundle="${locale}" key="locale.personalInfo.dontMatch" var="dontMatch" />
 </head>
 <body>
 	<div class="wrapper container">
@@ -118,7 +110,7 @@
 									type="password" class="form-control" id="copypassword"
 									name="copypassword" placeholder="${enterCopyPass}"
 									maxlength="40"/>
-								<span id="copypass_error" class="error"></span>
+								<span id="copypass_error" style="color:#eb6a5a;" hidden="true">${dontMatch}</span>
 							</div>
 							<div class="form-group">
 								<label for="last_name">${lastName}:</label> <input type="text"

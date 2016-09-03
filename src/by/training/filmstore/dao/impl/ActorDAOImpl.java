@@ -71,14 +71,12 @@ public class ActorDAOImpl implements ActorDAO {
 		return findActorByCriteria(0, FindActorCriteria.FIND_ALL);
 	}
 
-	private void fillGeneratedIdIfInsert(CommandDAO commandDAO, PreparedStatement prepStatement, Actor actor)
+	private void fillGeneratedIdIfInsert(PreparedStatement prepStatement, Actor actor)
 			throws SQLException {
-		if (commandDAO == CommandDAO.INSERT) {
 			ResultSet resultset = prepStatement.getGeneratedKeys();
 			if (resultset != null && resultset.next()) {
 				actor.setId(resultset.getShort(1));
 			}
-		}
 	}
 
 	private <T> boolean updateByCriteria(CommandDAO commandDAO, T parametr) throws FilmStoreDAOException {
@@ -97,8 +95,9 @@ public class ActorDAOImpl implements ActorDAO {
 			if (affectedRows != 0) {
 				success = true;
 			}
-
-			fillGeneratedIdIfInsert(commandDAO, prepStatement, (Actor) parametr);
+			if (commandDAO == CommandDAO.INSERT) {
+				fillGeneratedIdIfInsert(prepStatement, (Actor) parametr);
+			}
 		} catch (SQLException | PoolConnectionException e) {
 			logger.error("Error creating of PreparedStatement.Operation failed (" + commandDAO.name() + ")", e);
 			throw new FilmStoreDAOException(e);
@@ -125,7 +124,7 @@ public class ActorDAOImpl implements ActorDAO {
 		case UPDATE: {
 			prepStatement = connection.prepareStatement(SQL_UPDATE);
 			prepStatement.setString(1, ((Actor) parametr).getFio());
-			prepStatement.setShort(1, ((Actor) parametr).getId());
+			prepStatement.setShort(2, ((Actor) parametr).getId());
 		}
 			break;
 		case DELETE: {

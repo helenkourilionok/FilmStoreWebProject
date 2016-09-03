@@ -66,6 +66,18 @@
 	var="makeComment" />
 <fmt:message bundle="${locale}" key="locale.index.noneFilmWasFound"
 	var="noneFilmWasFound" />
+<fmt:message bundle="${locale}" key="locale.filmedit.filmName"
+	var="filmName" />
+<fmt:message bundle="${locale}" key="locale.filmedit.price"
+	var="filmPrice" />
+<fmt:message bundle="${locale}" key="locale.showfilm.quality"
+	var="filmQuality" />
+<fmt:message bundle="${locale}" key="locale.listFilm.operation"
+	var="filmOperation" />
+<fmt:message bundle="${locale}" key="locale.adminmenu.update"
+	var="update" />
+<fmt:message bundle="${locale}" key="locale.adminmenu.delete"
+	var="delete" />
 </head>
 <body>
 	<div class="wrapper container">
@@ -81,32 +93,33 @@
 					<h2>${noneFilmWasFound}</h2>
 				</c:if>
 				<!--Bar-->
-				<div class="col-md-12">
-				<table class="table table-bordered">
-					<thead>
-					      <tr>
-					       <th>Film name</th>
-					       <th>Price</th>
-					       <th>Quality</th>
-					       <th>Action</th>
-					     </tr>
-					</thead>
-					<tbody>
-						<c:forEach var="film" items="${requestScope.listFilm}">
-							      <tr>
-							        <td>${film.name}(${film.yearOfRelease})</td>
-							        <td>${film.price}</td>
-							        <td>${film.quality.getNameQuality()}</td>
-							        <td>  <a href="Controller?command=a_update_film_show_page&id=${film.id}">Update</a>
-							        	  <a href="Controller?command=a_delete_film&id=${film.id}">Delete</a>
-							        </td>
-							      </tr>
-						</c:forEach>
-						</tbody>
-					  </table>
-				</div>
-			</section>
-			<div class="row col-md-6 col-md-offset-5">
+				<article class="row">
+					<div class="col-md-12">
+					<table class="table table-bordered">
+						<thead>
+						      <tr>
+						       <th>${filmName}</th>
+						       <th>${filmPrice}</th>
+						       <th>${filmQuality}</th>
+						       <th>${filmOperation}</th>
+						     </tr>
+						</thead>
+						<tbody>
+							<c:forEach var="film" items="${requestScope.listFilm}">
+								      <tr>
+								        <td>${film.name}(${film.yearOfRelease})</td>
+								        <td>${film.price}</td>
+								        <td>${film.quality.getNameQuality()}</td>
+								        <td>  <a href="Controller?command=a_update_film_show_page&id=${film.id}">${update}</a>
+								        	  <a href="Controller?command=a_delete_film&id=${film.id}">${delete}</a>
+								        </td>
+								      </tr>
+							</c:forEach>
+							</tbody>
+						  </table>
+					</div>
+				</article>
+			<div class="row col-md-8 col-md-offset-1">
 				<ul class="pagination">
 					<c:if test="${pageInfo.currentPage != 1}">
 				    	<li><a href="Controller?command=a_show_list_film&page=${pageInfo.currentPage - 1}&start=${pageInfo.currentPage - 1}">Previous</a></li>
@@ -129,6 +142,7 @@
 					</c:if>
 				</ul>
 			</div>
+			</section>
 			<!-- content -->
 		</div>
 	</div>

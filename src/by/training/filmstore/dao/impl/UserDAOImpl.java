@@ -38,6 +38,14 @@ public class UserDAOImpl implements UserDAO {
 			+ " WHERE user.us_email = ?";
 	private static final String SQL_DELETE = "DELETE FROM user WHERE user.us_email = ?";
 	private static final String SQL_CHANGE_PASSWORD = "UPDATE user SET user.us_password = MD5(?) WHERE user.us_email = ?";
+	private static final String SQL_FIND_USER_FOR_MAKE_DISCOUNT = 
+			"select user.us_email,user.us_password,user.us_role, "+
+			"user.us_last_name,user.us_first_name,user.us_patronymic, "+
+			"user.us_phone,user.us_balance,user.us_discount from user "+
+            " where user.us_email in (SELECT `order`.ord_email_user "+ 
+			" FROM `order` WHERE  `order`.ord_status = 'оплачено' AND "+ 
+			" YEAR(`order`.ord_date_of_order) = ? AND MONTH(`order`.ord_date_of_order) = ? "+
+			" GROUP BY `order`.ord_email_user HAVING COUNT(`order`.ord_uid) >= ?)";
 	private static final String SQL_MAKE_DISCOUNT = "UPDATE user SET user.us_discount = ? where user.us_email in (SELECT `order`.ord_email_user "
 			+ " FROM `order` WHERE  `order`.ord_status = 'оплачено' AND "
 			+ " YEAR(`order`.ord_date_of_order) = ? AND MONTH(`order`.ord_date_of_order) = ?"
@@ -135,7 +143,7 @@ public class UserDAOImpl implements UserDAO {
 		return success;
 	}
 
-	public boolean changePassword(User user) throws FilmStoreDAOException {
+	public boolean changePassword(String email,String newPassword) throws FilmStoreDAOException {
 		Connection connection = null;
 		PreparedStatement prepStatement = null;
 		PoolConnection poolConnection = null;
@@ -144,8 +152,8 @@ public class UserDAOImpl implements UserDAO {
 			poolConnection = PoolConnection.getInstance();
 			connection = poolConnection.takeConnection();
 			prepStatement = connection.prepareStatement(SQL_CHANGE_PASSWORD);
-			prepStatement.setString(1, user.getPassword());
-			prepStatement.setString(2, user.getEmail());
+			prepStatement.setString(1,newPassword);
+			prepStatement.setString(2,email);
 			int affectedRows = prepStatement.executeUpdate();
 			if (affectedRows != 0) {
 				success = true;
@@ -233,6 +241,16 @@ public class UserDAOImpl implements UserDAO {
 	@Override
 	public List<User> findAll() throws FilmStoreDAOException {
 		return findUserByCriteria(FindUserCriteria.FIND_ALL);
+	}
+	
+	@Override
+	public List<User> findUserForMakeDiscount(int year, int month, byte countOrders) throws FilmStoreDAOException {
+		String _year = String.valueOf(year);
+		String _month = String.valueOf(month);
+		String _countOrders = String.valueOf(countOrders);
+		List<User> listUser = findUserByCriteria(FindUserCriteria.FIND_USER_FOR_MAKE_DISCOUNT,
+				_year,_month,_countOrders);
+		return listUser;
 	}
 
 	private <T> boolean updateByCriteria(CommandDAO commandDAO, T parametr) throws FilmStoreDAOException {
@@ -381,6 +399,12 @@ public class UserDAOImpl implements UserDAO {
 			prepStatement = connection.prepareStatement(SQL_FIND_ALL);
 		}
 			break;
+		case FIND_USER_FOR_MAKE_DISCOUNT:{
+			prepStatement = connection.prepareStatement(SQL_FIND_USER_FOR_MAKE_DISCOUNT);
+			prepStatement.setInt(1, Integer.valueOf(parametr[0]));
+			prepStatement.setInt(2, Integer.valueOf(parametr[1]));
+			prepStatement.setByte(3, Byte.valueOf(parametr[2]));
+		}break;
 		}
 		return prepStatement;
 	}
@@ -415,6 +439,6 @@ public class UserDAOImpl implements UserDAO {
 	}
 
 	private enum FindUserCriteria {
-		FIND_BY_ID, FIND_BY_EMAIL_AND_PASSWORD, FIND_ALL
+		FIND_BY_ID, FIND_BY_EMAIL_AND_PASSWORD, FIND_ALL,FIND_USER_FOR_MAKE_DISCOUNT
 	}
 }

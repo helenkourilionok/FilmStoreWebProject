@@ -13,7 +13,12 @@ body {
 	display: block;
 	clear: both;
 }
-
+.error {
+	display: inline-block;
+	padding-top: 15px;
+	font-size: 14px;
+	color: #eb6a5a;
+}
 .language {
 	display: inline;
 	float: right;

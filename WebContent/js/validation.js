@@ -37,6 +37,22 @@ function formValidation(language) {
 	return true;
 }
 
+function changePasswordValidation(language) {
+	var email = document.signup.email.value;
+	var password = document.signup.password.value;
+	var passcopy = document.signup.copypassword.value;
+	if (!validateEmail(email, language)) {
+		return false;
+	}
+	if (!validatePassword(password, language)) {
+		return false;
+	}
+	if (!validatePassCopyPass(password, passcopy, language)) {
+		return false;
+	}
+	return true;
+}
+
 function validateEmail(email, language) {
 	var emailRegex = /^[A-Za-z0-9._\-]*\@[A-Za-z]*\.[A-Za-z]{2,5}$/;
 	if (email == "") {
@@ -117,24 +133,20 @@ function validatePassword(password, language) {
 
 function validatePassCopyPass(password, passcopy, language) {
 	if (passcopy == "") {
-		document.signup.copypassword.focus();
-		if (language == 'en') {
-			document.getElementById("copypass_error").innerHTML = "Repeat the password";
-		} else {
-			document.getElementById("copypass_error").innerHTML = "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u0435 \u043F\u0430\u0440\u043E\u043B\u044C";
-		}
+		$("#copypassword").css('border', '#eb6a5a 1px solid');
+		document.getElementById("copypass_error").hidden = false;
 		return false;
 	}
 	if (password != passcopy) {
-		document.registration.copypassword.focus();
+		document.signup.copypassword.focus();
 		$("#password").css('border', '#eb6a5a 1px solid');
 		$("#copypassword").css('border', '#eb6a5a 1px solid');
-		document.getElementById("copypass_error").innerHTML = "Passwords are not matching, re-enter again";
+		document.getElementById("copypass_error").hidden = false;
 		return false;
 	}
 	$("#password").css('border', '#ccc 1px solid');
 	$("#copypassword").css('border', '#ccc 1px solid');
-	document.getElementById("copypass_error").innerHTML = "";
+	document.getElementById("copypass_errors").hidden = true;
 	return true;
 }
 
